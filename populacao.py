@@ -1,50 +1,46 @@
-
-import numpy as np
-
-LIMITE = 15  # domínio: inteiros de -LIMITE a +LIMITE
+import random
 
 
 def codificar(numero):
-    """Converte um número inteiro de -15 a 15 em 5 bits (sinal-magnitude)."""
-
+    # bit de sinal: 1 se for negativo, 0 se for positivo ou zero
     if numero < 0:
         sinal = 1
     else:
         sinal = 0
 
-    # valor absoluto, sem sinal!
+    # valor absoluto, sem sinal
     magnitude = abs(numero)
 
-    # magnitude em binário com 4 dígitos
+    # magnitude em binário com 4 dígitos, como texto
     binario = format(magnitude, "04b")
 
-    # junta o sinal com os 4 bits de magnitude
-    bits = [sinal] + [int(b) for b in binario]
+    # começa a lista com o bit de sinal
+    bits = [sinal]
 
-    # converte a lista em array numpy de inteiros
-    return np.array(bits, dtype=int)
+    # acrescenta cada dígito do binário, convertido para número
+    for digito in binario:
+        bits.append(int(digito))
 
-
-def criar_individuo(rng):
-    """Cria um indivíduo aleatório: sorteia x e y e junta os bits (10 bits)."""
-
-    # sorteia x e y em [-15, 15]; o high do integers NÃO é incluído, por isso LIMITE + 1 [-15, +15)
-    x = rng.integers(-LIMITE, LIMITE + 1)
-    y = rng.integers(-LIMITE, LIMITE + 1)
-
-    # codifica x e y e concatena os dois arrays num único array de 10 bits
-    return np.concatenate([codificar(x), codificar(y)])
+    return bits
 
 
-def criar_populacao(tamanho, rng):
-    """Cria a população inicial: matriz (tamanho, 10), um indivíduo por linha."""
+def criar_individuo():
+    # sorteia x e y entre -15 e 15
+    x = random.randint(-15, 15)
+    y = random.randint(-15, 15)
 
-    individuos = []
+    # junta os 5 bits de x com os 5 bits de y
+    individuo = codificar(x) + codificar(y)
+
+    return individuo
+
+
+def criar_populacao(tamanho):
+    # listas de listas
+    populacao = []
 
     for i in range(tamanho):
-        individuo = criar_individuo(rng)
+        individuo = criar_individuo()
+        populacao.append(individuo)
 
-        individuos.append(individuo)
-
-    # transforma a lista de indivíduos numa matriz: cada indivíduo vira uma linha
-    return np.array(individuos)
+    return populacao
