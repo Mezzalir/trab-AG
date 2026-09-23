@@ -1,19 +1,3 @@
-"""
-populacao.py
-
-Criação dos indivíduos e da população inicial do Algoritmo Genético.
-
-codificar(numero): converte um número inteiro entre -15 e 15 em 5 bits
-(sinal-magnitude). Primeiro define o bit de sinal: 1 se o número for
-negativo e 0 se for positivo ou zero. Depois pega o valor absoluto
-(magnitude) e o converte para binário com 4 dígitos, completando com
-zeros à esquerda. Por fim, junta o bit de sinal com os 4 bits da
-magnitude e devolve um array numpy.
-Exemplos: -3 -> [1 0 0 1 1] | 15 -> [0 1 1 1 1]
-
-criar_individuo(rng): sorteia x e y inteiros entre -15 e 15, codifica
-cada um em 5 bits e junta os dois num array de 10 bits [x | y].
-"""
 
 import numpy as np
 
@@ -50,3 +34,17 @@ def criar_individuo(rng):
 
     # codifica x e y e concatena os dois arrays num único array de 10 bits
     return np.concatenate([codificar(x), codificar(y)])
+
+
+def criar_populacao(tamanho, rng):
+    """Cria a população inicial: matriz (tamanho, 10), um indivíduo por linha."""
+
+    individuos = []
+
+    for i in range(tamanho):
+        individuo = criar_individuo(rng)
+
+        individuos.append(individuo)
+
+    # transforma a lista de indivíduos numa matriz: cada indivíduo vira uma linha
+    return np.array(individuos)
