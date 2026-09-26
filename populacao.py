@@ -69,3 +69,17 @@ class Populacao:
             pais.append(escolhido)
 
         return pais
+
+    def obter_elite(self):
+        self.ordenar_populacao()
+
+        return cromossomo.Cromossomo(self.populacao[0].genes)
+
+    def aplicar_elitismo(self, populacao_anterior):
+        elite = populacao_anterior.obter_elite()
+
+        self.ordenar_populacao()
+
+        self.populacao[-1] = elite
+
+        self.ordenar_populacao()
