@@ -2,8 +2,16 @@ from criar_individuo import criar_individuo, codificar, decodificar
 
 
 class Cromossomo:
-    def __init__(self):
-        self.genes = criar_individuo()
+    def __init__(self, genes=None):
+
+        # Cria um inviduo novo aleatório OU com genes especificios (dos pais)
+        if genes is None:
+            self.genes = criar_individuo()
+        else:
+            self.genes = list(
+                genes
+            )  # usa list para criar uma nova list e nao usar a mesma lista do pai
+
         self.fitness = self.calcular_fitness()
         self.rank = 0
         self.probabilidade = 0
