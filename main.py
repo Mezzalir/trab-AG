@@ -14,5 +14,5 @@ print("Populacao inicial:")
 populacao_inicial.imprimir_populacao()
 
 print("\nPopulacao inicial ordenada:")
-populacao_inicial.ordenar_populacao()
+populacao_inicial.calcular_probabilidades()
 populacao_inicial.imprimir_populacao()
