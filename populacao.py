@@ -1,4 +1,5 @@
 import cromossomo
+import random
 
 
 class Populacao:
@@ -42,3 +43,29 @@ class Populacao:
 
         for individuo in self.populacao:
             individuo.probabilidade = individuo.rank / soma_ranks
+
+    def selecionar_pais(self):
+        # a roleta gira N vezes e monta a pool dos pais
+
+        # probabilidades precisam ser calculadas antes
+        self.calcular_probabilidades()
+
+        N = len(self.populacao)
+
+        # pool dos pais
+        pais = []
+
+        for _ in range(N):
+            # gira a roleta sorteando um numero entre 0 e 1
+            r = random.random()
+            # a cada giro a soma recomeca o zero
+            soma = 0
+
+            for individuo in self.populacao:
+                soma = soma + individuo.probabilidade
+                if soma >= r:
+                    escolhido = individuo
+                    break
+            pais.append(escolhido)
+
+        return pais
