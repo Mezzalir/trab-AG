@@ -1,21 +1,27 @@
-import cromossomo
 import random
+
+import cromossomo
 
 
 class Populacao:
     def __init__(self):
         self.populacao = []
+        self.geracao = 0
+        self.taxa_mutacao = 0
 
     def criar_populacao(self, Max):
 
         for i in range(Max):
             individuo = cromossomo.Cromossomo()
+            individuo.criar_genes()
+            individuo.calcular_fitness()
             self.populacao.append(individuo)
 
     def imprimir_populacao(self):
         for individuo in self.populacao:
             print(
-                f"individuo = {individuo.genes}  fitness = {individuo.fitness}  rank = {individuo.rank}  prob = {individuo.probabilidade:.2%}"
+                f"individuo = {individuo.genes} fitness = {individuo.fitness} "
+                f"rank = {individuo.rank} prob = {individuo.probabilidade:.2%}"
             )
 
     def ordenar_populacao(self):
@@ -70,16 +76,31 @@ class Populacao:
 
         return pais
 
-    def obter_elite(self):
-        self.ordenar_populacao()
+    def aplicar_elitismo(self):
+        # populacao deve estar previamente ordenada (no main.py)
+        # Individuo mais apto vai direto pra nova geracao
+        # sem precisar fazer crossover e mutacao
+        elite = self.populacao[0]
 
-        return cromossomo.Cromossomo(self.populacao[0].genes)
+        return elite
 
-    def aplicar_elitismo(self, populacao_anterior):
-        elite = populacao_anterior.obter_elite()
+    def cruzamento(self):
 
-        self.ordenar_populacao()
+        filho = []
+        pool = self.selecionar_pais()
+        pai1 = random.choice(pool)
 
-        self.populacao[-1] = elite
+        while True:
+            pai2 = random.choice(pool)
+            if pai1 != pai2:
+                break
 
-        self.ordenar_populacao()
+        for i in range(5):
+            mascara = random.randint(1, 2)
+
+            if mascara == 1:
+                filho.append(pai1[i])
+            else:
+                filho.append(pai2[i])
+
+        return filho
