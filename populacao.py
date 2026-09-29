@@ -77,30 +77,50 @@ class Populacao:
         return pais
 
     def aplicar_elitismo(self):
-        # populacao deve estar previamente ordenada (no main.py)
-        # Individuo mais apto vai direto pra nova geracao
-        # sem precisar fazer crossover e mutacao
-        elite = self.populacao[0]
+
+        self.ordenar_populacao()
+        melhor = self.populacao[0]
+
+        # cria um objeto novo, copia os genes e calcula o fitness
+        elite = cromossomo.Cromossomo()
+        elite.genes = list(melhor.genes)
+        elite.calcular_fitness()
 
         return elite
 
-    def cruzamento(self):
+    def cruzamento(self, taxa_cruzamento):
 
-        filho = []
-        pool = self.selecionar_pais()
-        pai1 = random.choice(pool)
+        pais = self.selecionar_pais()
+        filhos = []
 
-        while True:
-            pai2 = random.choice(pool)
-            if pai1 != pai2:
-                break
+        # pegar pais de dois em dois
+        # se N for impar o ultimo pai fica sem par
+        for i in range(0, len(pais) - 1, 2):  # faz o i pular de 2 em 2
+            pai1 = pais[i]
+            pai2 = pais[i + 1]
 
-        for i in range(5):
-            mascara = random.randint(1, 2)
+            # os filhos ocomecam como copias dos papais
+            genes_filho1 = list(pai1.genes)
+            genes_filho2 = list(pai2.genes)
 
-            if mascara == 1:
-                filho.append(pai1[i])
-            else:
-                filho.append(pai2[i])
+            # sorteia se este par vai cruzar, conforme a taxa
+            if random.random() < taxa_cruzamento:
+                # cruzamento uniforme. Bit a  bit
+                for j in range(len(pai1.genes)):
+                    mascara = random.randint(1, 2)
 
-        return filho
+                    if mascara == 1:
+                        genes_filho1[j] = pai1.genes[j]
+                        genes_filho2[j] = pai2.genes[j]
+                    else:
+                        genes_filho1[j] = pai2.genes[j]
+                        genes_filho2[j] = pai1.genes[j]
+
+            # transformar em objeto pois ate o momento eh so uma lista de numeros
+            for genes in (genes_filho1, genes_filho2):
+                filho = cromossomo.Cromossomo()
+                filho.genes = genes
+                filho.calcular_fitness()
+                filhos.append(filho)
+
+        return filhos

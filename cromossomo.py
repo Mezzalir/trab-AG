@@ -24,9 +24,9 @@ class Cromossomo:
         # a e b sao os intervalos
         # laco verifica se a e b nao sao iguais
         while True:
-            a = randint(0, 2)
-            b = randint(2, 4)
-            if a != b:
+            a = randint(0, 5)
+            b = randint(0, 5)
+            if b - a >= 2:
                 break
 
         geneX_temp = self.genes[:5]
@@ -36,3 +36,4 @@ class Cromossomo:
         geneY_mutado = geneY_temp[:a] + geneY_temp[a:b][::-1] + geneY_temp[b:]
         self.genes = geneX_mutado + geneY_mutado
 
+        self.calcular_fitness()
