@@ -16,3 +16,5 @@ populacao_inicial.imprimir_populacao()
 print("\nPopulacao inicial ordenada:")
 populacao_inicial.calcular_probabilidades()
 populacao_inicial.imprimir_populacao()
+
+

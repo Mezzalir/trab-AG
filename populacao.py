@@ -1,21 +1,27 @@
-import cromossomo
 import random
+
+import cromossomo
 
 
 class Populacao:
     def __init__(self):
         self.populacao = []
+        self.geracao = 0
+        self.taxa_mutacao = 0
 
     def criar_populacao(self, Max):
 
         for i in range(Max):
             individuo = cromossomo.Cromossomo()
+            individuo.criar_genes()
+            individuo.calcular_fitness()
             self.populacao.append(individuo)
 
     def imprimir_populacao(self):
         for individuo in self.populacao:
             print(
-                f"individuo = {individuo.genes}  fitness = {individuo.fitness}  rank = {individuo.rank}  prob = {individuo.probabilidade:.2%}"
+                f"individuo = {individuo.genes} fitness = {individuo.fitness} "
+                f"rank = {individuo.rank} prob = {individuo.probabilidade:.2%}"
             )
 
     def ordenar_populacao(self):
@@ -70,16 +76,51 @@ class Populacao:
 
         return pais
 
-    def obter_elite(self):
-        self.ordenar_populacao()
-
-        return cromossomo.Cromossomo(self.populacao[0].genes)
-
-    def aplicar_elitismo(self, populacao_anterior):
-        elite = populacao_anterior.obter_elite()
+    def aplicar_elitismo(self):
 
         self.ordenar_populacao()
+        melhor = self.populacao[0]
 
-        self.populacao[-1] = elite
+        # cria um objeto novo, copia os genes e calcula o fitness
+        elite = cromossomo.Cromossomo()
+        elite.genes = list(melhor.genes)
+        elite.calcular_fitness()
 
-        self.ordenar_populacao()
+        return elite
+
+    def cruzamento(self, taxa_cruzamento):
+
+        pais = self.selecionar_pais()
+        filhos = []
+
+        # pegar pais de dois em dois
+        # se N for impar o ultimo pai fica sem par
+        for i in range(0, len(pais) - 1, 2):  # faz o i pular de 2 em 2
+            pai1 = pais[i]
+            pai2 = pais[i + 1]
+
+            # os filhos ocomecam como copias dos papais
+            genes_filho1 = list(pai1.genes)
+            genes_filho2 = list(pai2.genes)
+
+            # sorteia se este par vai cruzar, conforme a taxa
+            if random.random() < taxa_cruzamento:
+                # cruzamento uniforme. Bit a  bit
+                for j in range(len(pai1.genes)):
+                    mascara = random.randint(1, 2)
+
+                    if mascara == 1:
+                        genes_filho1[j] = pai1.genes[j]
+                        genes_filho2[j] = pai2.genes[j]
+                    else:
+                        genes_filho1[j] = pai2.genes[j]
+                        genes_filho2[j] = pai1.genes[j]
+
+            # transformar em objeto pois ate o momento eh so uma lista de numeros
+            for genes in (genes_filho1, genes_filho2):
+                filho = cromossomo.Cromossomo()
+                filho.genes = genes
+                filho.calcular_fitness()
+                filhos.append(filho)
+
+        return filhos
