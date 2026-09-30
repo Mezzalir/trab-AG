@@ -154,12 +154,13 @@ class Populacao:
             nova_geracao.ordenar_populacao()
             self.populacao = nova_geracao.populacao[:N]
 
-        # ultima geracao que nao passa pelo laco 
+        # ultima geracao que nao passa pelo laco
         self.geracao = self.num_geracoes
         self.ordenar_populacao()
         self.registrar_geracao()
 
     def registrar_geracao(self):
+        # criando os registros!!!!!!!!
         N = len(self.populacao)
         melhor = self.populacao[0]
 
@@ -182,3 +183,12 @@ class Populacao:
             )
         )
 
+    def salvar_log_em_arquivo(self, nome_arquivo):
+        arquivo = open(nome_arquivo, "w")
+        arquivo.write("geracao,fitness_medio,melhor_fitness,melhor_x,melhor_y\n")
+
+        for g in self.historico:
+            arquivo.write(
+                f"{g.geracao},{g.media:.2f},{g.melhor_fitness:.2f},{g.melhor_x},{g.melhor_y}\n"
+            )
+        arquivo.close()
