@@ -6,12 +6,15 @@ import cromossomo
 class Populacao:
     def __init__(self):
         self.populacao = []
+        self.pool_acasalamento = []
+        self.num_geracoes = 200
         self.geracao = 0
-        self.taxa_mutacao = 0
+        self.taxa_mutacao = 0.01
+        self.taxa_cruzamento = 0.7
 
-    def criar_populacao(self, Max):
+    def criar_populacao(self, popmax):
 
-        for i in range(Max):
+        for i in range(popmax):
             individuo = cromossomo.Cromossomo()
             individuo.criar_genes()
             individuo.calcular_fitness()
@@ -20,8 +23,15 @@ class Populacao:
     def imprimir_populacao(self):
         for individuo in self.populacao:
             print(
-                f"individuo = {individuo.genes} fitness = {individuo.fitness} "
-                f"rank = {individuo.rank} prob = {individuo.probabilidade:.2%}"
+                f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
+                f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
+            )
+
+    def imprimir_pool(self):
+        for individuo in self.pool_acasalamento:
+            print(
+                f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
+                f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
             )
 
     def ordenar_populacao(self):
@@ -31,17 +41,14 @@ class Populacao:
 
     def atribuir_ranking(self):
         # garante que o melhor esta no indice 0
-        self.ordenar_populacao()
-        # len devolve a quantidade de itens da lista e é guardando em N
+        # self.ordenar_populacao()
         N = len(self.populacao)
 
-        # o loop fará N interacoes . indice vai de 0 ate  N - 1 porque a contagem comeca em 0
-        # melhor individuo recebe N. O segundo melhor N - 1 e assim vai , tendeu
         for indice, individuo in enumerate(self.populacao):
             individuo.rank = N - indice
 
     def calcular_probabilidades(self):
-        self.atribuir_ranking()
+        # self.atribuir_ranking()
         N = len(self.populacao)
 
         # soma dos ranks (formula)
@@ -54,15 +61,16 @@ class Populacao:
         # a roleta gira N vezes e monta a pool dos pais
 
         # probabilidades precisam ser calculadas antes
-        self.calcular_probabilidades()
+        # self.calcular_probabilidades()
+        #
+        self.pool_acasalamento = []
 
         N = len(self.populacao)
 
         # pool dos pais
-        pais = []
+        pool = self.pool_acasalamento
 
         for _ in range(N):
-            # gira a roleta sorteando um numero entre 0 e 1
             r = random.random()
             # a cada giro a soma recomeca o zero
             soma = 0
@@ -72,40 +80,34 @@ class Populacao:
                 if soma >= r:
                     escolhido = individuo
                     break
-            pais.append(escolhido)
-
-        return pais
+            pool.append(escolhido)
 
     def aplicar_elitismo(self):
 
-        self.ordenar_populacao()
         melhor = self.populacao[0]
 
-        # cria um objeto novo, copia os genes e calcula o fitness
         elite = cromossomo.Cromossomo()
         elite.genes = list(melhor.genes)
         elite.calcular_fitness()
 
         return elite
 
-    def cruzamento(self, taxa_cruzamento):
+    def cruzamento(self):
 
-        pais = self.selecionar_pais()
+        pais = self.pool_acasalamento
         filhos = []
 
-        # pegar pais de dois em dois
-        # se N for impar o ultimo pai fica sem par
-        for i in range(0, len(pais) - 1, 2):  # faz o i pular de 2 em 2
+        nova_populacao = Populacao()
+
+        # WARNING: com N impar o ultimo pai fica sem par -> o elite completa a populacao
+        for i in range(0, len(pais) - 1, 2):
             pai1 = pais[i]
             pai2 = pais[i + 1]
 
-            # os filhos ocomecam como copias dos papais
             genes_filho1 = list(pai1.genes)
             genes_filho2 = list(pai2.genes)
 
-            # sorteia se este par vai cruzar, conforme a taxa
-            if random.random() < taxa_cruzamento:
-                # cruzamento uniforme. Bit a  bit
+            if random.random() < self.taxa_cruzamento:
                 for j in range(len(pai1.genes)):
                     mascara = random.randint(1, 2)
 
@@ -116,11 +118,38 @@ class Populacao:
                         genes_filho1[j] = pai2.genes[j]
                         genes_filho2[j] = pai1.genes[j]
 
-            # transformar em objeto pois ate o momento eh so uma lista de numeros
             for genes in (genes_filho1, genes_filho2):
                 filho = cromossomo.Cromossomo()
                 filho.genes = genes
-                filho.calcular_fitness()
-                filhos.append(filho)
 
-        return filhos
+                if random.random() < self.taxa_mutacao:
+                    filho.mutacao()
+                    filho.calcular_fitness()
+
+                filho.calcular_fitness()
+
+                nova_populacao.populacao.append(filho)
+
+        return nova_populacao
+
+    def gerar_geracoes(self):
+
+        for i in range(self.num_geracoes):
+            self.geracao = i
+
+            self.ordenar_populacao()
+            self.atribuir_ranking()
+            self.calcular_probabilidades()
+
+            # NOTE: Esse imprimir eh so pra testar funcionando
+            print(f"Geração : {self.geracao + 1}")
+            self.imprimir_populacao()
+            print()
+
+            elite = self.aplicar_elitismo()
+            self.selecionar_pais()
+            nova_geracao = self.cruzamento()
+            N = len(self.populacao)
+            nova_geracao.populacao.append(elite)
+            nova_geracao.ordenar_populacao()
+            self.populacao = nova_geracao.populacao[:N]
