@@ -1,6 +1,8 @@
 import random
 
 import cromossomo
+import geracao
+from code_e_decode import decodificar
 
 
 class Populacao:
@@ -11,6 +13,7 @@ class Populacao:
         self.geracao = 0
         self.taxa_mutacao = 0.01
         self.taxa_cruzamento = 0.7
+        self.historico = []
 
     def criar_populacao(self, popmax):
 
@@ -141,10 +144,7 @@ class Populacao:
             self.atribuir_ranking()
             self.calcular_probabilidades()
 
-            # NOTE: Esse imprimir eh so pra testar funcionando
-            print(f"Geração : {self.geracao + 1}")
-            self.imprimir_populacao()
-            print()
+            self.registrar_geracao()
 
             elite = self.aplicar_elitismo()
             self.selecionar_pais()
@@ -153,3 +153,32 @@ class Populacao:
             nova_geracao.populacao.append(elite)
             nova_geracao.ordenar_populacao()
             self.populacao = nova_geracao.populacao[:N]
+
+        # ultima geracao que nao passa pelo laco 
+        self.geracao = self.num_geracoes
+        self.ordenar_populacao()
+        self.registrar_geracao()
+
+    def registrar_geracao(self):
+        N = len(self.populacao)
+        melhor = self.populacao[0]
+
+        soma = 0
+        pontos = []
+        for individuo in self.populacao:
+            soma = soma + individuo.fitness
+            x = decodificar(individuo.genes[:5])
+            y = decodificar(individuo.genes[5:])
+            pontos.append((x, y))
+
+        self.historico.append(
+            geracao.Geracao(
+                self.geracao,
+                soma / N,
+                melhor.fitness,
+                decodificar(melhor.genes[:5]),
+                decodificar(melhor.genes[5:]),
+                pontos,
+            )
+        )
+
