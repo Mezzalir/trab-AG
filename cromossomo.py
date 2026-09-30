@@ -35,5 +35,3 @@ class Cromossomo:
         geneY_temp = self.genes[5:]
         geneY_mutado = geneY_temp[:a] + geneY_temp[a:b][::-1] + geneY_temp[b:]
         self.genes = geneX_mutado + geneY_mutado
-
-        self.calcular_fitness()
