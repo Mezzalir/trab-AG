@@ -27,12 +27,12 @@ class Populacao:
                 f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
             )
 
-    # def imprimir_pool(self):
-    #     for individuo in self.pool_acasalamento:
-    #         print(
-    #             f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
-    #             f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
-    #         )
+    def imprimir_pool(self):
+        for individuo in self.pool_acasalamento:
+            print(
+                f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
+                f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
+            )
 
     def ordenar_populacao(self):
         self.populacao = sorted(
@@ -62,6 +62,8 @@ class Populacao:
 
         # probabilidades precisam ser calculadas antes
         # self.calcular_probabilidades()
+        #
+        self.pool_acasalamento = []
 
         N = len(self.populacao)
 
@@ -97,8 +99,8 @@ class Populacao:
 
         nova_populacao = Populacao()
 
-        # WARNING: lista nao percorre ate o final -> ultimo ind. eh o elite
-        for i in range(0, len(pais) - 3, 2):
+        # WARNING: com N impar o ultimo pai fica sem par -> o elite completa a populacao
+        for i in range(0, len(pais) - 1, 2):
             pai1 = pais[i]
             pai2 = pais[i + 1]
 
@@ -140,12 +142,14 @@ class Populacao:
             self.calcular_probabilidades()
 
             # NOTE: Esse imprimir eh so pra testar funcionando
-            print(f"Geração : {self.geracao+1}")
+            print(f"Geração : {self.geracao + 1}")
             self.imprimir_populacao()
             print()
 
             elite = self.aplicar_elitismo()
             self.selecionar_pais()
             nova_geracao = self.cruzamento()
+            N = len(self.populacao)
             nova_geracao.populacao.append(elite)
-
+            nova_geracao.ordenar_populacao()
+            self.populacao = nova_geracao.populacao[:N]

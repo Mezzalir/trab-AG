@@ -2,10 +2,10 @@ import populacao as p
 
 print("Testando o funcionamento das funcoes...\n")
 
-populacao = p.Populacao(6)
+populacao = p.Populacao()
 
 # Cria populacao inicial
-populacao.criar_populacao()
+populacao.criar_populacao(6)
 
 print("Nossa populacao inicial:")
 populacao.imprimir_populacao()
