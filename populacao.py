@@ -184,7 +184,7 @@ class Populacao:
         )
 
     def salvar_log_em_arquivo(self, nome_arquivo):
-        arquivo = open(nome_arquivo, "w")
+        arquivo = open("logs/" + nome_arquivo, "w")
         arquivo.write("geracao,fitness_medio,melhor_fitness,melhor_x,melhor_y\n")
 
         for g in self.historico:
