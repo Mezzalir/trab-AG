@@ -4,17 +4,17 @@ import cromossomo
 
 
 class Populacao:
-    def __init__(self, popmax=6):
+    def __init__(self):
         self.populacao = []
         self.pool_acasalamento = []
-        self.popmax = popmax
+        self.num_geracoes = 200
         self.geracao = 0
         self.taxa_mutacao = 0.01
         self.taxa_cruzamento = 0.7
 
-    def criar_populacao(self):
+    def criar_populacao(self, popmax):
 
-        for i in range(self.popmax):
+        for i in range(popmax):
             individuo = cromossomo.Cromossomo()
             individuo.criar_genes()
             individuo.calcular_fitness()
@@ -27,12 +27,12 @@ class Populacao:
                 f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
             )
 
-    def imprimir_pool(self):
-        for individuo in self.pool_acasalamento:
-            print(
-                f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
-                f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
-            )
+    # def imprimir_pool(self):
+    #     for individuo in self.pool_acasalamento:
+    #         print(
+    #             f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
+    #             f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
+    #         )
 
     def ordenar_populacao(self):
         self.populacao = sorted(
@@ -95,21 +95,15 @@ class Populacao:
         pais = self.pool_acasalamento
         filhos = []
 
-        # NOTE: faz parte do teste
         nova_populacao = Populacao()
 
-        for i in range(0, len(pais) - 1, 2):
+        # WARNING: lista nao percorre ate o final -> ultimo ind. eh o elite
+        for i in range(0, len(pais) - 3, 2):
             pai1 = pais[i]
             pai2 = pais[i + 1]
 
             genes_filho1 = list(pai1.genes)
             genes_filho2 = list(pai2.genes)
-
-            print()
-
-            print(f"Pai 1 = {genes_filho1}")
-            print(f"Pai 2 = {genes_filho2}")
-            print()
 
             if random.random() < self.taxa_cruzamento:
                 for j in range(len(pai1.genes)):
@@ -122,33 +116,36 @@ class Populacao:
                         genes_filho1[j] = pai2.genes[j]
                         genes_filho2[j] = pai1.genes[j]
 
-
-            print("filhos cruzados")
-            print()
-            num = 1
             for genes in (genes_filho1, genes_filho2):
                 filho = cromossomo.Cromossomo()
                 filho.genes = genes
-
-                print(f"Filho {num} = {filho.genes}")
 
                 if random.random() < self.taxa_mutacao:
                     filho.mutacao()
                     filho.calcular_fitness()
 
-                    print(f"Filho {num} = {filho.genes} <- sofreu mutacao")
-                    print()
-
                 filho.calcular_fitness()
-
 
                 nova_populacao.populacao.append(filho)
 
-                num+=1
+        return nova_populacao
 
+    def gerar_geracoes(self):
 
-                # filhos.append(filho)
+        for i in range(self.num_geracoes):
+            self.geracao = i
 
-        print("nova populacao:")
-        print(nova_populacao.imprimir_populacao())
-        # return filhos
+            self.ordenar_populacao()
+            self.atribuir_ranking()
+            self.calcular_probabilidades()
+
+            # NOTE: Esse imprimir eh so pra testar funcionando
+            print(f"Geração : {self.geracao+1}")
+            self.imprimir_populacao()
+            print()
+
+            elite = self.aplicar_elitismo()
+            self.selecionar_pais()
+            nova_geracao = self.cruzamento()
+            nova_geracao.populacao.append(elite)
+
