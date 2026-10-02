@@ -23,14 +23,18 @@ class Populacao:
             individuo.calcular_fitness()
             self.populacao.append(individuo)
 
-    def imprimir_populacao(self):
+    def imprimir_populacao(self, elite):
+        print(f"\nGeracao : {self.geracao}")
         for individuo in self.populacao:
             print(
                 f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
                 f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
             )
+        individuo = elite
+        print(f"Elite {individuo.genes} fitness = {individuo.fitness:.1f} "
+                f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}\n")
 
-    def imprimir_pool(self):
+    def imprimir_pool(self, elite):
         for individuo in self.pool_acasalamento:
             print(
                 f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
@@ -61,17 +65,8 @@ class Populacao:
             individuo.probabilidade = individuo.rank / soma_ranks
 
     def selecionar_pais(self):
-        # a roleta gira N vezes e monta a pool dos pais
-
-        # probabilidades precisam ser calculadas antes
-        # self.calcular_probabilidades()
-        #
-        self.pool_acasalamento = []
 
         N = len(self.populacao)
-
-        # pool dos pais
-        pool = self.pool_acasalamento
 
         for _ in range(N):
             r = random.random()
@@ -83,7 +78,7 @@ class Populacao:
                 if soma >= r:
                     escolhido = individuo
                     break
-            pool.append(escolhido)
+            self.pool_acasalamento.append(escolhido)
 
     def aplicar_elitismo(self):
 
@@ -100,9 +95,6 @@ class Populacao:
         pais = self.pool_acasalamento
         filhos = []
 
-        nova_populacao = Populacao()
-
-        # WARNING: com N impar o ultimo pai fica sem par -> o elite completa a populacao
         for i in range(0, len(pais) - 1, 2):
             pai1 = pais[i]
             pai2 = pais[i + 1]
@@ -122,42 +114,54 @@ class Populacao:
                         genes_filho2[j] = pai1.genes[j]
 
             for genes in (genes_filho1, genes_filho2):
+
+                if len(filhos) >= len(pais) - 1:
+                    return filhos
+
                 filho = cromossomo.Cromossomo()
                 filho.genes = genes
 
                 if random.random() < self.taxa_mutacao:
                     filho.mutacao()
-                    filho.calcular_fitness()
 
                 filho.calcular_fitness()
 
-                nova_populacao.populacao.append(filho)
+                filhos.append(filho)
 
-        return nova_populacao
+        return filhos
 
     def gerar_geracoes(self):
 
         for i in range(self.num_geracoes):
-            self.geracao = i
+            self.geracao = i + 1
 
             self.ordenar_populacao()
+
+
             self.atribuir_ranking()
             self.calcular_probabilidades()
-
             self.registrar_geracao()
 
             elite = self.aplicar_elitismo()
+            self.imprimir_populacao(elite)
+
             self.selecionar_pais()
-            nova_geracao = self.cruzamento()
+
+            filhos_cruzados = self.cruzamento()
+
+            nova_populacao = Populacao()
+            nova_populacao.populacao = filhos_cruzados
+
             N = len(self.populacao)
-            nova_geracao.populacao.append(elite)
-            nova_geracao.ordenar_populacao()
-            self.populacao = nova_geracao.populacao[:N]
+
+            nova_populacao.populacao.append(elite)
+            self.populacao = nova_populacao.populacao
+            self.pool_acasalamento = []
 
         # ultima geracao que nao passa pelo laco
-        self.geracao = self.num_geracoes
-        self.ordenar_populacao()
-        self.registrar_geracao()
+        # self.geracao = self.num_geracoes
+        # self.ordenar_populacao()
+        # self.registrar_geracao()
 
     def registrar_geracao(self):
         # criando os registros!!!!!!!!

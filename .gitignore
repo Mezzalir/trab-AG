@@ -3,7 +3,6 @@
 
 # arquivos gerados pelo Python
 __pycache__/
-*.pyc
 
 # arquivos do macOS
 .DS_Store
