@@ -1,23 +1,26 @@
 import random
 
+import graficos
 import cromossomo
 import geracao
 from code_e_decode import decodificar
 
 
 class Populacao:
-    def __init__(self):
+    def __init__(self, popmax, geracoes, tx_mutacao, tx_crossover):
         self.populacao = []
         self.pool_acasalamento = []
-        self.num_geracoes = 200
+        self.num_geracoes = geracoes
+        self.pop_max = popmax
         self.geracao = 0
-        self.taxa_mutacao = 0.01
-        self.taxa_cruzamento = 0.7
+        self.taxa_mutacao = tx_mutacao
+        self.taxa_cruzamento = tx_crossover
         self.historico = []
+        self.max_ranking = 1.2
 
-    def criar_populacao(self, popmax):
+    def criar_populacao(self):
 
-        for i in range(popmax):
+        for i in range(self.pop_max):
             individuo = cromossomo.Cromossomo()
             individuo.criar_genes()
             individuo.calcular_fitness()
@@ -31,10 +34,12 @@ class Populacao:
                 f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}"
             )
         individuo = elite
-        print(f"Elite {individuo.genes} fitness = {individuo.fitness:.1f} "
-                f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}\n")
+        print(
+            f"Elite {individuo.genes} fitness = {individuo.fitness:.1f} "
+            f"rank = {individuo.rank:.1f} prob = {individuo.probabilidade:.1%}\n"
+        )
 
-    def imprimir_pool(self, elite):
+    def imprimir_pool(self):
         for individuo in self.pool_acasalamento:
             print(
                 f"individuo = {individuo.genes} fitness = {individuo.fitness:.1f} "
@@ -47,25 +52,25 @@ class Populacao:
         )
 
     def atribuir_ranking(self):
-        # garante que o melhor esta no indice 0
-        # self.ordenar_populacao()
         N = len(self.populacao)
 
         for indice, individuo in enumerate(self.populacao):
             individuo.rank = N - indice
 
     def calcular_probabilidades(self):
-        # self.atribuir_ranking()
         N = len(self.populacao)
 
-        # soma dos ranks (formula)
-        soma_ranks = N * (N + 1) / 2
+        Max = self.max_ranking
+        Min = 2 - Max
 
         for individuo in self.populacao:
-            individuo.probabilidade = individuo.rank / soma_ranks
+            individuo.probabilidade = (
+                Min + (Max - Min) * (individuo.rank - 1) / (N - 1)
+            ) / N
 
     def selecionar_pais(self):
 
+        self.pool_acasalamento = []
         N = len(self.populacao)
 
         for _ in range(N):
@@ -76,12 +81,11 @@ class Populacao:
             for individuo in self.populacao:
                 soma = soma + individuo.probabilidade
                 if soma >= r:
-                    escolhido = individuo
+                    # escolhido = individuo
+                    self.pool_acasalamento.append(individuo)
                     break
-            self.pool_acasalamento.append(escolhido)
 
     def aplicar_elitismo(self):
-
         melhor = self.populacao[0]
 
         elite = cromossomo.Cromossomo()
@@ -92,8 +96,15 @@ class Populacao:
 
     def cruzamento(self):
 
-        pais = self.pool_acasalamento
+        pais = self.pool_acasalamento.copy()
+        random.shuffle(pais)
         filhos = []
+
+        total_filhos = len(self.populacao) - 1
+
+        if len(pais) % 2 != 0:
+            novo_pai = random.choice(pais)
+            pais.append(novo_pai)
 
         for i in range(0, len(pais) - 1, 2):
             pai1 = pais[i]
@@ -115,7 +126,7 @@ class Populacao:
 
             for genes in (genes_filho1, genes_filho2):
 
-                if len(filhos) >= len(pais) - 1:
+                if len(filhos) >= total_filhos:
                     return filhos
 
                 filho = cromossomo.Cromossomo()
@@ -136,32 +147,31 @@ class Populacao:
             self.geracao = i + 1
 
             self.ordenar_populacao()
-
-
             self.atribuir_ranking()
             self.calcular_probabilidades()
             self.registrar_geracao()
 
             elite = self.aplicar_elitismo()
-            self.imprimir_populacao(elite)
-
             self.selecionar_pais()
 
-            filhos_cruzados = self.cruzamento()
+            self.imprimir_populacao(elite)
+            self.imprimir_pool()
 
-            nova_populacao = Populacao()
-            nova_populacao.populacao = filhos_cruzados
+            nova_geracao = self.cruzamento()
+            nova_geracao.append(elite)
 
-            N = len(self.populacao)
+            self.populacao = nova_geracao
 
-            nova_populacao.populacao.append(elite)
-            self.populacao = nova_populacao.populacao
-            self.pool_acasalamento = []
+        # Registro final da ultima geracao apos a evolucao
+        self.geracao = self.num_geracoes
+        self.ordenar_populacao()
+        self.atribuir_ranking()
+        self.calcular_probabilidades()
+        self.registrar_geracao()
 
-        # ultima geracao que nao passa pelo laco
-        # self.geracao = self.num_geracoes
-        # self.ordenar_populacao()
-        # self.registrar_geracao()
+        # Plotando no final para testar
+        grafico = graficos.GraficoPopulacao(self.populacao, self.geracao)
+        grafico.plotar_grafico_comportamento()
 
     def registrar_geracao(self):
         # criando os registros!!!!!!!!
