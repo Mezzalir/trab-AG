@@ -14,6 +14,7 @@ class Populacao:
         self.taxa_mutacao = 0.01
         self.taxa_cruzamento = 0.7
         self.historico = []
+        self.max_ranking = 1.2
 
     def criar_populacao(self, popmax):
 
@@ -54,11 +55,12 @@ class Populacao:
         # self.atribuir_ranking()
         N = len(self.populacao)
 
-        # soma dos ranks (formula)
-        soma_ranks = N * (N + 1) / 2
+        # max eh quantas copias o melhor recebe em media
+        Max = self.max_ranking
+        Min = 2 - Max
 
         for individuo in self.populacao:
-            individuo.probabilidade = individuo.rank / soma_ranks
+            individuo.probabilidade = (Min + (Max - Min) * (individuo.rank - 1) / (N - 1)) / N
 
     def selecionar_pais(self):
         # a roleta gira N vezes e monta a pool dos pais
