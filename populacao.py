@@ -60,13 +60,12 @@ class Populacao:
     def calcular_probabilidades(self):
         N = len(self.populacao)
 
+        # max eh quantas copias o melhor recebe em media
         Max = self.max_ranking
         Min = 2 - Max
 
         for individuo in self.populacao:
-            individuo.probabilidade = (
-                Min + (Max - Min) * (individuo.rank - 1) / (N - 1)
-            ) / N
+            individuo.probabilidade = (Min + (Max - Min) * (individuo.rank - 1) / (N - 1)) / N
 
     def selecionar_pais(self):
 
