@@ -1,4 +1,5 @@
 import populacao as p
+import graficos
 
 tamanho = int(input("Tamanho da populacao: "))
 n_geracoes = int(input("Numero de geracoes: "))
@@ -12,3 +13,4 @@ populacao.taxa_mutacao = taxa_mutacao
 populacao.criar_populacao()
 populacao.gerar_geracoes()
 populacao.salvar_log_em_arquivo("log.csv")
+graficos.plotar_fitness_medio(populacao.historico)

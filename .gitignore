@@ -4,5 +4,8 @@
 # arquivos gerados pelo Python
 __pycache__/
 
-# arquivos do macOS
-.DS_Store
+# arquivos  gerados pelo programa 
+logs/*
+!logs/.gitkeep
+imagens/*
+!imagens/.gitkeep
