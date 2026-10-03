@@ -143,7 +143,7 @@ class Populacao:
     def gerar_geracoes(self):
 
         for i in range(self.num_geracoes):
-            self.geracao = i + 1
+            self.geracao = i
 
             self.ordenar_populacao()
             self.atribuir_ranking()
