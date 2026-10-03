@@ -4,6 +4,8 @@
 # arquivos gerados pelo Python
 __pycache__/
 
+graficos/
+
 # arquivos  gerados pelo programa 
 logs/*
 !logs/.gitkeep
