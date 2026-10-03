@@ -143,7 +143,7 @@ class Populacao:
     def gerar_geracoes(self):
 
         for i in range(self.num_geracoes):
-            self.geracao = i + 1
+            self.geracao = i
 
             self.ordenar_populacao()
             self.atribuir_ranking()
@@ -165,7 +165,7 @@ class Populacao:
         self.calcular_probabilidades()
         self.registrar_geracao()
 
-        # Plotando no final para testar
+        # grafico da populacao em cada geracao
         grafico = graficos.GraficoPopulacao(self.historico)
         grafico.plotar_grafico_comportamento()
 
