@@ -153,9 +153,6 @@ class Populacao:
             elite = self.aplicar_elitismo()
             self.selecionar_pais()
 
-            self.imprimir_populacao(elite)
-            self.imprimir_pool()
-
             nova_geracao = self.cruzamento()
             nova_geracao.append(elite)
 
@@ -169,7 +166,7 @@ class Populacao:
         self.registrar_geracao()
 
         # Plotando no final para testar
-        grafico = graficos.GraficoPopulacao(self.populacao, self.geracao)
+        grafico = graficos.GraficoPopulacao(self.historico)
         grafico.plotar_grafico_comportamento()
 
     def registrar_geracao(self):
