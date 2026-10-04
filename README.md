@@ -45,5 +45,8 @@ Na pasta do projeto:
 ## Saídas
 
 - `logs/log.csv`: geração, fitness médio, melhor fitness, melhor x e melhor y de cada geração
-- `imagens/fitness_medio.png`: gráfico do fitness médio por geração
-- `graficos/execucao_N/geracao_G.png`: população no espaço de busca em cada geração, com o melhor indivíduo destacado (uma pasta por execução)
+- `graficos/execucao_N/`: uma pasta por execução, com
+  - `fitness_medio.png`: gráfico do fitness médio por geração
+  - `populacao/geracao_G.png`: população no espaço de busca em cada geração, com o melhor indivíduo destacado
+
+Os gráficos não são sobrescritos: cada execução ganha uma pasta nova (`execucao_1`, `execucao_2`, ...). O log é sobrescrito a cada execução: `logs/log.csv` guarda só a última. Para comparar os logs de duas execuções, copie o arquivo antes de rodar de novo.

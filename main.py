@@ -12,11 +12,9 @@ def saudacoes():
     print("\nDigite os parâmetros do algoritmo:")
 
 
-def footer(geracoes):
+def footer(geracoes, pasta):
     print(f"\nAlgoritmo executado com sucesso nas {geracoes} gerações!\n")
-    print("- Para avaliar o gráfico do fitness médio, consulte a pasta imagens/")
-    print("- Para avaliar os gráficos do comportamento da população por")
-    print("geração, consultar pasta graficos/")
+    print(f"- Para avaliar os gráficos desta execução, consulte a pasta {pasta}/")
     print("- Para avaliar o log, entre na pasta logs/\n")
     print("================================================================")
 
@@ -49,8 +47,12 @@ populacao.taxa_mutacao = taxa_mutacao
 populacao.criar_populacao()
 populacao.gerar_geracoes()
 populacao.salvar_log_em_arquivo("log.csv")
-graficos.plotar_fitness_medio(populacao.historico)
+
+pasta = graficos.criar_pasta_execucao()
+grafico = graficos.GraficoPopulacao(populacao.historico, pasta)
+grafico.plotar_grafico_comportamento()
+graficos.plotar_fitness_medio(populacao.historico, pasta)
 
 done = True
 
-footer(n_geracoes)
+footer(n_geracoes, pasta)

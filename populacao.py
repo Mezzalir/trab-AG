@@ -1,6 +1,5 @@
 import random
 
-import graficos
 import cromossomo
 import geracao
 from code_e_decode import decodificar
@@ -164,10 +163,6 @@ class Populacao:
         self.atribuir_ranking()
         self.calcular_probabilidades()
         self.registrar_geracao()
-
-        # grafico da populacao em cada geracao
-        grafico = graficos.GraficoPopulacao(self.historico)
-        grafico.plotar_grafico_comportamento()
 
     def registrar_geracao(self):
         # criando os registros!!!!!!!!

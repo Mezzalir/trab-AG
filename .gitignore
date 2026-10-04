@@ -9,5 +9,3 @@ graficos/*
 # arquivos  gerados pelo programa 
 logs/*
 !logs/.gitkeep
-imagens/*
-!imagens/.gitkeep

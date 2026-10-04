@@ -8,29 +8,29 @@ import matplotlib.pyplot as plt
 from code_e_decode import codificar, decodificar
 
 
+def criar_pasta_execucao():
+
+    os.makedirs("graficos", exist_ok=True)
+
+    numero_execucao = 1
+
+    while os.path.exists(f"graficos/execucao_{numero_execucao}"):
+        numero_execucao = numero_execucao + 1
+
+    pasta = f"graficos/execucao_{numero_execucao}"
+
+    os.makedirs(pasta + "/populacao")
+
+    return pasta
+
+
 class GraficoPopulacao:
 
-    def __init__(self, historico):
+    def __init__(self, historico, pasta):
         self.historico = historico
-
-    def criar_pasta_execucao(self):
-
-        os.makedirs("graficos", exist_ok=True)
-
-        numero_execucao = 1
-
-        while os.path.exists(f"graficos/execucao_{numero_execucao}"):
-            numero_execucao = numero_execucao + 1
-
-        pasta = f"graficos/execucao_{numero_execucao}"
-
-        os.makedirs(pasta)
-
-        return pasta
+        self.pasta = pasta
 
     def plotar_grafico_comportamento(self):
-
-        pasta = self.criar_pasta_execucao()
 
         for g in self.historico:
 
@@ -62,12 +62,12 @@ class GraficoPopulacao:
 
             plt.tight_layout()
 
-            plt.savefig(f"{pasta}/geracao_{g.geracao}.png")
+            plt.savefig(f"{self.pasta}/populacao/geracao_{g.geracao}.png")
 
             plt.close()
 
 
-def plotar_fitness_medio(historico):
+def plotar_fitness_medio(historico, pasta):
     geracoes = []
     medias = []
 
@@ -82,5 +82,5 @@ def plotar_fitness_medio(historico):
     plt.title("Fitness médio por geração")
     plt.xlabel("Geração")
     plt.ylabel("Fitness médio")
-    plt.savefig("imagens/fitness_medio.png", dpi=300, bbox_inches="tight")
+    plt.savefig(pasta + "/fitness_medio.png", dpi=300, bbox_inches="tight")
     plt.close()
