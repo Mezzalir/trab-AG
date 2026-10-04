@@ -14,9 +14,10 @@ def saudacoes():
 
 def footer(geracoes):
     print(f"\nAlgoritmo executado com sucesso nas {geracoes} gerações!\n")
-    print("Para avaliar o gráfico do fitness médio, consulte a pasta imagens/")
-    print("Para avaliar os gráficos da população por geração, consulte a pasta graficos/")
-    print("Para avaliar o log, entre na pasta logs/\n")
+    print("- Para avaliar o gráfico do fitness médio, consulte a pasta imagens/")
+    print("- Para avaliar os gráficos do comportamento da população por")
+    print("geração, consultar pasta graficos/")
+    print("- Para avaliar o log, entre na pasta logs/\n")
     print("================================================================")
 
 
@@ -38,7 +39,7 @@ def animate():
         sys.stdout.flush()
         time.sleep(0.1)
 
-t = threading.Thread(target=animate)
+t = threading.Thread(target=animate, daemon=True)
 t.start()
 
 populacao = p.Populacao(tamanho, n_geracoes, taxa_mutacao, taxa_cruzamento)
@@ -50,7 +51,6 @@ populacao.gerar_geracoes()
 populacao.salvar_log_em_arquivo("log.csv")
 graficos.plotar_fitness_medio(populacao.historico)
 
-time.sleep(10)
 done = True
 
 footer(n_geracoes)
