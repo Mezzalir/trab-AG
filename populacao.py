@@ -165,7 +165,7 @@ class Populacao:
         self.calcular_probabilidades()
         self.registrar_geracao()
 
-        # Plotando no final para testar
+        # grafico da populacao em cada geracao
         grafico = graficos.GraficoPopulacao(self.historico)
         grafico.plotar_grafico_comportamento()
 

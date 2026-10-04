@@ -1,6 +1,6 @@
 # Algoritmo Genético — 1º Trabalho de Otimização e Combinatória
 
-Equipe: Lucas Willian Mezzalira e Pedro Rockenbach
+Equipe: Lucas Willian Mezzalira e Pedro Paulo Rockenbach
 
 ## Especificação (Função 10)
 
@@ -46,4 +46,4 @@ Na pasta do projeto:
 
 - `logs/log.csv`: geração, fitness médio, melhor fitness, melhor x e melhor y de cada geração
 - `imagens/fitness_medio.png`: gráfico do fitness médio por geração
-- `imagens/grafico_geracao.png`: população no espaço de busca
+- `graficos/execucao_N/geracao_G.png`: população no espaço de busca em cada geração, com o melhor indivíduo destacado (uma pasta por execução)

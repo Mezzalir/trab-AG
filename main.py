@@ -7,17 +7,16 @@ import sys
 
 def saudacoes():
     print("================= Algoritmo Genético ===========================")
-    print("\nAutores: Lucas William Mezzalira")
+    print("\nAutores: Lucas Willian Mezzalira")
     print("         Pedro Paulo Rockenbach")
     print("\nDigite os parâmetros do algoritmo:")
 
 
 def footer(geracoes):
     print(f"\nAlgoritmo executado com sucesso nas {geracoes} gerações!\n")
-    print("- Para avaliar o gráfico do fitness médio, consulte a pasta imagens/")
-    print("- Para avaliar os gráficos do comportamento da população por")
-    print("geração, consultar pasta graficos/")
-    print("- Para avaliar o log, entre na pasta logs/\n")
+    print("Para avaliar o gráfico do fitness médio, consulte a pasta imagens/")
+    print("Para avaliar os gráficos da população por geração, consulte a pasta graficos/")
+    print("Para avaliar o log, entre na pasta logs/\n")
     print("================================================================")
 
 
