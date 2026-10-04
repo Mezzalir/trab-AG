@@ -1,7 +1,10 @@
 import matplotlib
+
 matplotlib.use("Agg")
 import os
+
 import matplotlib.pyplot as plt
+
 from code_e_decode import codificar, decodificar
 
 
@@ -48,10 +51,16 @@ class GraficoPopulacao:
             plt.xlabel("X")
             plt.ylabel("Y")
 
+            plt.xlim(-16, 16)
+            plt.ylim(-16, 16)
+
             plt.title(f"Comportamento da população - " f"Geração {g.geracao}")
 
-            plt.legend()
-            plt.grid(True)
+            plt.legend(loc="upper right")
+
+            plt.grid(True, linestyle="--", alpha=0.4)
+
+            plt.tight_layout()
 
             plt.savefig(f"{pasta}/geracao_{g.geracao}.png")
 
@@ -70,8 +79,8 @@ def plotar_fitness_medio(historico):
 
     plt.figure()
     plt.plot(geracoes, medias)
-    plt.title("Fitness médio por geracao")
-    plt.xlabel("Geracao")
+    plt.title("Fitness médio por geração")
+    plt.xlabel("Geração")
     plt.ylabel("Fitness médio")
     plt.savefig("imagens/fitness_medio.png", dpi=300, bbox_inches="tight")
     plt.close()

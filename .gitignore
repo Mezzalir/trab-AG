@@ -4,7 +4,7 @@
 # arquivos gerados pelo Python
 __pycache__/
 
-graficos/
+graficos/*
 
 # arquivos  gerados pelo programa 
 logs/*
